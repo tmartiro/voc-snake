@@ -1,0 +1,9 @@
+.tmp.*
+.DS_Store
+Window
+raylib
+voc
+*.c
+*.o
+*.h
+*.sym
