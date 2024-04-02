@@ -3,8 +3,8 @@
 ## Quick Start
 clone the project
 ```
-git clone https://github.com/tmartiro/raylib-window-voc
-cd raylib-window-voc
+git clone https://github.com/tmartiro/voc-snake
+cd voc-snake
 ```
 
 VOC compiler build
