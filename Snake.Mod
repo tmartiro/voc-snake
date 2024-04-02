@@ -22,8 +22,6 @@ CONST
   title = "Vishap";
 
 VAR
-  ScreenWidth: INTEGER;
-  ScreenHeight: INTEGER;
   BgColor: Raylib.TColor;
   SnakePos: Raylib.TVector2;
   DeltaPos: Raylib.TVector2;
@@ -43,8 +41,8 @@ BEGIN
   r.color.a := 0FFX;
   r.size.x := 15.0;
   r.size.y := 15.0;
-  r.pos.x := SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, ScreenWidth));
-  r.pos.y := SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, ScreenHeight));
+  r.pos.x := SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenWidth()));
+  r.pos.y := SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenHeight()));
   RETURN r;
 END NewRabbit;
 
@@ -98,8 +96,8 @@ X: REAL;
 Y: REAL;
 BEGIN
   IF (R.pos.x < S.pos.x+S.size.x) & (R.pos.x+R.size.x > S.pos.x) & (R.pos.y < S.pos.y+S.size.y) & (R.pos.y + R.size.y > S.pos.y ) THEN
-    X:= Math.round(SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, ScreenWidth-100)) / 5.0) * 5.0;
-    Y:= Math.round(SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, ScreenHeight-100)) / 5.0) * 5.0;
+    X:= Math.round(SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenWidth()-100)) / 5.0) * 5.0;
+    Y:= Math.round(SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenHeight()-100)) / 5.0) * 5.0;
     R.pos.x := X+(R.size.x/2);
     R.pos.y := Y+(R.size.y/2);
     S.len := S.len + 1;
@@ -134,42 +132,40 @@ BEGIN
       Snake.pos.x := Snake.pos.x + DeltaPos.x;
       Snake.pos.y := Snake.pos.y + DeltaPos.y;
 
-      IF Snake.pos.x > ScreenWidth THEN
+      IF Snake.pos.x > Raylib.GetScreenWidth() THEN
         Snake.pos.x := 0
       ELSIF Snake.pos.x < 0 THEN
-        Snake.pos.x := ScreenWidth;
+        Snake.pos.x := Raylib.GetScreenWidth();
       END;
 
-      IF Snake.pos.y > ScreenHeight THEN
+      IF Snake.pos.y > Raylib.GetScreenHeight() THEN
         Snake.pos.y := 0;
       ELSIF Snake.pos.y < 0 THEN
-        Snake.pos.y := ScreenHeight;
+        Snake.pos.y := Raylib.GetScreenHeight();
       END;
 END HandleControls;
 
 
 BEGIN
-  ScreenWidth := 800;
-  ScreenHeight:= 600;
   BgColor.r := 0X;
   BgColor.g := 0X;
   BgColor.b := 0X;
   BgColor.a := 0FFX;
-
-
   Velocity := 5;
   DeltaPos.x := 1 * Velocity;
   DeltaPos.y := 0;
-
   Raylib.SetRandomSeed(0FAAH);
 
+  (* initialize the window *)
+  Raylib.InitWindow(0, 0, title);
+  Raylib.SetTargetFPS(60);
 
+  (* go fullscreen with native resolution *)
+  Raylib.ToggleFullscreen();
 
+  (* Game objects - heap allocated *)
   Snake := NewSnake();
   Rabbit := NewRabbit();
-
-  Raylib.InitWindow(ScreenWidth, ScreenHeight, title);
-  Raylib.SetTargetFPS(60);
 
   WHILE ~Raylib.WindowShouldClose() DO
     Raylib.BeginDrawing();
