@@ -7,7 +7,7 @@ raylib=./raylib/src/libraylib.a
 
 compile_osx() {
 	$voc -ce  Raylib.Mod
-	$voc -cm  Window.Mod
+	$voc -cm  Snake.Mod
 	clang \
 		-g \
 		*.o -o Window \

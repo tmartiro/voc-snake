@@ -47,9 +47,17 @@ TYPE
     b*: CHAR;
     a*: CHAR;
   END;
+
   TVector2* = RECORD
     x*: REAL;
     y*: REAL;
+  END;
+
+  TRect* = RECORD
+    x*: REAL;
+    y*: REAL;
+    width*: REAL;
+    height*: REAL;
   END;
 
 
@@ -64,20 +72,28 @@ PROCEDURE -SetTargetFPS*(fps:LONGINT) "SetTargetFPS(fps)";
 PROCEDURE -GetColor*(hexValue:SET):SET "(Color)GetColor(hexValue)";
 PROCEDURE -IsKeyPressed*(key:LONGINT):BOOLEAN "(bool)IsKeyPressed(key)";
 PROCEDURE -GetFrameTime*():REAL "(float)GetFrameTime()";
+PROCEDURE -GetRandomValue*(min:LONGINT; max:LONGINT):LONGINT "(int)GetRandomValue(min,max)";
+PROCEDURE -SetRandomSeed*(seed:LONGINT) "SetRandomSeed(seed)";
+PROCEDURE -GetTime*():REAL "(double)GetTime()";
 
-
-PROCEDURE -colorInit(R:CHAR; G:CHAR; B:CHAR; A:CHAR):SET '(struct Color){ .r = R, .g = G, .b = B, .a = A }';
-PROCEDURE -vector2Init(X:REAL; Y:REAL):INTEGER '(struct Vector2){ .x = X, .y = Y }';
+PROCEDURE -colorInit(R:CHAR; G:CHAR; B:CHAR; A:CHAR):SET "(struct Color){ .r = R, .g = G, .b = B, .a = A }";
+PROCEDURE -vector2Init(X:REAL; Y:REAL):INTEGER "(struct Vector2){ .x = X, .y = Y }";
+PROCEDURE -rectInit(X:REAL; Y:REAL; W:REAL; H:REAL):INTEGER "(struct Rectangle){ .x = X, .y = Y, .width = W, .height = H }";
 PROCEDURE -clearBackgroundR(color:SET) "ClearBackground(color)";
 PROCEDURE -drawRectangleVR(pos:REAL; size:REAL; color:SET) "DrawRectangleV(pos,size,color)";
 PROCEDURE -drawRectangleR(posx:LONGINT; posy:LONGINT; width:LONGINT; height:LONGINT; color:SET) "DrawRectangle(posx, posy, width, height, color)";
+PROCEDURE -drawTextR(text:ARRAY OF CHAR; posX:LONGINT; posY:LONGINT; fontSize:LONGINT; color:SET) "DrawText(text,posX,posY,fontSize,color)";
 
 
+
+PROCEDURE DrawText*(text:ARRAY OF CHAR; posx:LONGINT; posy:LONGINT; fontSize:LONGINT; C:TColor);
+BEGIN
+  drawTextR(text,posx,posy,fontSize,colorInit(C.r, C.g, C.b, C.a));
+END DrawText;
 
 PROCEDURE DrawRectangle*(posx:LONGINT; posy:LONGINT; width:LONGINT; height:LONGINT; C:TColor);
 BEGIN
   drawRectangleR(posx, posy, width, height, colorInit(C.r, C.g, C.b, C.a));
-  (* drawRectangleR(posx, posy, width, height, GetColor(a) ); *)
 END DrawRectangle;
 
 
