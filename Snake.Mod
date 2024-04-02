@@ -1,4 +1,4 @@
-MODULE Window;
+MODULE Snake;
 IMPORT SYSTEM, Raylib, Out, Math, Strings, vt100;
 
 TYPE
@@ -185,5 +185,5 @@ BEGIN
 
   Raylib.CloseWindow();
 
-END Window.
+END Snake.
 

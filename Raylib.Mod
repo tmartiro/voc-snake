@@ -62,7 +62,7 @@ TYPE
 
 
 
-PROCEDURE -AinclRaylib*() '#include "../raylib/src/raylib.h"';
+PROCEDURE -AinclRaylib*() '#include "./raylib/src/raylib.h"';
 PROCEDURE -InitWindow*(width:LONGINT; height:LONGINT; title:ARRAY OF CHAR) "InitWindow(width,height,title)";
 PROCEDURE -CloseWindow*() "CloseWindow()";
 PROCEDURE -BeginDrawing*() "BeginDrawing()";

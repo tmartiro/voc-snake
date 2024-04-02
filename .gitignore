@@ -1,6 +1,7 @@
 .tmp.*
 .DS_Store
 Window
+Snake
 raylib
 voc
 *.c

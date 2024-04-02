@@ -5,20 +5,16 @@ voc=./voc/install/bin/voc
 voc_lib=./voc/install/lib/
 raylib=./raylib/src/libraylib.a
 
-compile_osx() {
+compile() {
 	$voc -ce  Raylib.Mod
 	$voc -cm  Snake.Mod
-	clang \
-		-g \
-		*.o -o Snake \
-		-L${voc_lib} -lvoc-O2 \
-		${raylib} \
-		-framework OpenGL -framework Cocoa -framework IOKit -framework CoreAudio -framework CoreVideo
+	gcc  -g  *.o -o Snake -L${voc_lib} -lvoc-O2 -L./raylib/src -L/usr/local/lib -lraylib -lm
+
 }
 
 
 run() {
-	LD_LIBRARY_PATH=${voc_lib} DYLD_LIBRARY_PATH=${voc_lib} ./Snake
+	LD_LIBRARY_PATH=${voc_lib} ./Snake
 }
 
 case $1 in
@@ -35,8 +31,7 @@ case $1 in
 		rm -rf *.o *.h *.c *.sym *.tmp*
 		;;
 	*)
-		compile_osx
+		compile
 		run
 		;;
 esac
-
