@@ -1,5 +1,5 @@
 MODULE Snake;
-IMPORT SYSTEM, Raylib, Out, Math, Strings, vt100;
+IMPORT SYSTEM, Raylib, Out, Math, Strings, VT100;
 
 TYPE
   pTSnake= POINTER TO TSnake;
@@ -174,7 +174,7 @@ BEGIN
   WHILE ~Raylib.WindowShouldClose() DO
     Raylib.BeginDrawing();
     Raylib.ClearBackground(BgColor);
-    vt100.IntToStr(Snake.len, Score);
+    VT100.IntToStr(Snake.len, Score);
     Raylib.DrawText(Score,0,0,30,Snake.color);
     HandleControls();
     DrawSnake(Snake);
