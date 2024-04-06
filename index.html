@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<body>
+  <canvas id="app"> </canvas>
+</body>
+<script type="module">
+  var wasm;
+  async function init() {
+    const canvas = document.getElementById("app");
+    const ctx = canvas.getContext("2d");
+
+    function cstrlen(mem, ptr) {
+        let len = 0;
+        while (mem[ptr] != 0) {
+            len++;
+            ptr++;
+        }
+        return len;
+    }
+
+    function cstr_by_ptr(mem_buffer, ptr) {
+      const mem = new Uint8Array(mem_buffer);
+      const len = cstrlen(mem, ptr);
+      const bytes = new Uint8Array(mem_buffer, ptr, len);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function color_hex_unpacked(r, g, b, a) {
+      r = r.toString(16).padStart(2, '0');
+      g = g.toString(16).padStart(2, '0');
+      b = b.toString(16).padStart(2, '0');
+      a = a.toString(16).padStart(2, '0');
+      return "#"+r+g+b+a;
+    }
+
+    function getColorFromMemory(buffer, color_ptr) {
+      const [r, g, b, a] = new Uint8Array(buffer, color_ptr, 4);
+      console.log(r, g, b,a)
+      return color_hex_unpacked(r, g, b, a);
+    }
+
+
+    wasm = await WebAssembly.instantiateStreaming(fetch("./snake.wasm"), { env: {
+      Modules_Init: () => {},
+      alloca: () => {},
+      Modules_Halt: () => {},
+      Math__init: () => {},
+      Heap_INCREF: () => {},
+      Heap_REGTYP: () => {},
+      Heap_REGMOD: () => {},
+      Heap_FINALL: () => {},
+      Heap_NEWREC: () => {},
+      Heap_REGCMD: () => {},
+      SYSTEM_INHERIT: () => {},
+      SetRandomSeed: ()=>{},
+      Out__init: () => {},
+      Raylib__init: () => {},
+      Strings__init: () => {},
+      VT100__init: () => {},
+      memcpy: () => {},
+      VT100_IntToStr: () => {},
+      Math_round: (x) => { 
+        let y = Math.floor(x);
+        console.log(`Math_round(${x}) -> ${y}`);
+        return BigInt(y)
+      },
+      InitWindow: (width, height, title_ptr) => {
+        let buffer = wasm.instance.exports.memory.buffer;
+        ctx.canvas.width = width;
+        ctx.canvas.height = height;
+        console.log(title_ptr)
+        document.title = cstr_by_ptr(buffer, title_ptr);
+      },
+      SetTargetFPS: (fps) => {console.log(`SetTargetFPS(${fps}) do nothing`)},
+      WindowShouldClose:() =>{ return false},
+      BeginDrawing:() => {},
+      Raylib_DrawText: () => {},
+      EndDrawing: () => {},
+      CloseWindow: () => {},
+      GetScreenWidth: () => {console.log("GetScreenWidth()"); return 800},
+      GetScreenHeight: () => {console.log("GetScreenHeight()");return 600},
+      GetRandomValue: (from, to) => {let a = parseInt(Math.round(Math.random() * to)); console.log("GetRandomValue() -> ", a); return a},
+      IsKeyPressed: () => {},
+      DrawText: () => {},
+      DrawRectangle: () => {},
+      DrawRectangleV: () => {},
+      ClearBackground: (color_ptr) => {
+        console.log("ptr:", color_ptr);
+        console.log("getColorFromMem: ", getColorFromMemory(wasm.instance.exports.memory.buffer, color_ptr));
+        ctx.fillStyle = "#000000FF";//getColorFromMemory(wasm.instance.exports.memory.buffer, color_ptr);
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+
+        const mem = new Uint8Array(wasm.instance.exports.memory.buffer);
+        for (let i = 0; i <= mem.length; i++) {
+          if (mem[i] > 0 ) console.log("found at index:", i, ", val: ", mem[i]);
+        }
+        throw "ClearBackground: NOT_IMPLEMENTED"
+      },
+      Raylib_DrawRectangleV: () => {},
+    }});
+
+
+
+    console.log(wasm);
+    let prev = undefined;
+    wasm.instance.exports.Snake_Init();
+    function first(timestamp) {
+      prev=timestamp;
+      window.requestAnimationFrame(next);
+    }
+    function next(timestamp) {
+      const dt = timestamp - prev;
+      prev = timestamp;
+      wasm.instance.exports.Snake_Update();
+      window.requestAnimationFrame(next);
+    }
+    window.requestAnimationFrame(first);
+
+  }
+
+  init();
+</script>

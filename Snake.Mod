@@ -145,6 +145,28 @@ BEGIN
       END;
 END HandleControls;
 
+PROCEDURE Update*();
+BEGIN
+    Raylib.BeginDrawing();
+    Raylib.ClearBackground(BgColor);
+    VT100.IntToStr(Snake.len, Score);
+    Raylib.DrawText(Score,0,0,30,Snake.color);
+    HandleControls();
+    DrawSnake(Snake);
+    DrawRabbit(Rabbit);
+    Eat(Snake, Rabbit);
+    Raylib.EndDrawing();
+END Update;
+
+
+PROCEDURE Init*();
+BEGIN
+  Raylib.InitWindow(800, 600, title);
+  Raylib.SetTargetFPS(60);
+  (* go fullscreen with native resolution *)
+  (* Raylib.ToggleFullscreen(); *)
+END Init;
+
 
 BEGIN
   BgColor.r := 0X;
@@ -156,27 +178,14 @@ BEGIN
   DeltaPos.y := 0;
   Raylib.SetRandomSeed(0FAAH);
 
-  (* initialize the window *)
-  Raylib.InitWindow(0, 0, title);
-  Raylib.SetTargetFPS(60);
-
-  (* go fullscreen with native resolution *)
-  Raylib.ToggleFullscreen();
+  Init();
 
   (* Game objects - heap allocated *)
   Snake := NewSnake();
   Rabbit := NewRabbit();
 
   WHILE ~Raylib.WindowShouldClose() DO
-    Raylib.BeginDrawing();
-    Raylib.ClearBackground(BgColor);
-    VT100.IntToStr(Snake.len, Score);
-    Raylib.DrawText(Score,0,0,30,Snake.color);
-    HandleControls();
-    DrawSnake(Snake);
-    DrawRabbit(Rabbit);
-    Eat(Snake, Rabbit);
-    Raylib.EndDrawing();
+    Update();
   END;
 
   Raylib.CloseWindow();
