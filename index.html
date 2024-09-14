@@ -155,8 +155,6 @@
     function cstr_by_ptr(mem_buffer, ptr) {
       const mem = new Uint8Array(mem_buffer);
       const len = cstrlen(mem, ptr);
-      console.log("len", len)
-      console.log("ptr", ptr)
       const bytes = new Uint8Array(mem_buffer, ptr, len);
       return new TextDecoder().decode(bytes);
     }
@@ -206,15 +204,14 @@
         return 600
       },
       BeginDrawing:() => {},
-      Raylib_DrawText: (text_ptr, x, y, fontSize, color_ptr) => {
+      Raylib_DrawText: (text_ptr, text_len, x, y, fontSize, color_ptr) => {
+        const font_size = 25;
         const buffer = wasm.instance.exports.memory.buffer;
         const score = cstr_by_ptr(buffer, text_ptr);
         const color = getColorFromMemory(buffer, color_ptr);
-        console.log("DrawText:", text_ptr, x, y, fontSize, color_ptr);
-        ctx.fillStyle = "red";
-        ctx.font = `${fontSize}px Serif`;
-        ctx.fillText("score", x, y + fontSize);
-
+        ctx.fillStyle = color;
+        ctx.font = `${fontSize}px Monospace`;
+        ctx.fillText(score, x, (y + font_size));
       },
       EndDrawing: () => {
         prevPressedKeyState.clear();
@@ -251,9 +248,15 @@
       Heap_REGMOD:() => {},
       Heap_REGCMD:() => {},
       Heap_REGTYP:() => {},
-      SYSTEM_INHERIT:() => {},
       Heap_FINALL:() => {},
       Heap_NEWREC:(x) => {},
+      SYSTEM_INHERIT:() => {},
+      SYSTEM_MOD:(a, b) => {
+        return a%b;
+      },
+      SYSTEM_DIV:(a, b) => {
+        return a/b;
+      },
     }});
 
 

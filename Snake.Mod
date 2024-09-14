@@ -1,5 +1,5 @@
 MODULE Snake;
-IMPORT SYSTEM, Raylib, Out, Math, Strings, VT100;
+IMPORT SYSTEM, Raylib, Math;
 
 TYPE
   (* pTSnake= POINTER TO TSnake; *)
@@ -19,7 +19,7 @@ TYPE
     END;
 
 CONST
-  title = "Vishap";
+  title = "Odzik";
 
 VAR
   BgColor: Raylib.TColor;
@@ -28,7 +28,32 @@ VAR
   Velocity: REAL;
   Snake: TSnake;
   Rabbit: TRabbit;
-  Score: ARRAY 256 OF CHAR;
+  Score: ARRAY 10 OF CHAR;
+
+PROCEDURE IntToStr(val: LONGINT; VAR str: ARRAY OF CHAR);
+  VAR
+    i, j: LONGINT;
+    digits: ARRAY 16 OF LONGINT;
+BEGIN
+  IF val = MIN(LONGINT) THEN
+    COPY("-2147483648", str);
+    RETURN
+  END;
+  IF val < 0 THEN
+    val := -val; str[0] := "-"; j := 1
+  ELSE
+    j := 0
+  END;
+  i := 0;
+  REPEAT
+    digits[i] := val MOD 10; INC(i); val := val DIV 10
+  UNTIL val = 0;
+  DEC(i);
+  WHILE i >= 0 DO
+    str[j] := CHR(digits[i]+ORD("0")); INC(j); DEC(i)
+  END;
+  str[j] := 0X
+END IntToStr;
 
 PROCEDURE NewRabbit(VAR r:TRabbit);
 BEGIN
@@ -45,7 +70,6 @@ END NewRabbit;
 
 PROCEDURE NewSnake(VAR s: TSnake);
 BEGIN
-  (* NEW(s); *)
   s.color.r := 0X;
   s.color.g := 0FFX;
   s.color.b := 0X;
@@ -139,12 +163,16 @@ BEGIN
       END;
 END HandleControls;
 
+
 PROCEDURE Update*();
+VAR
+  scoreX: INTEGER;
+  scoreY: INTEGER;
 BEGIN
     Raylib.BeginDrawing();
     Raylib.ClearBackground(BgColor);
-    VT100.IntToStr(Snake.len, Score);
-    Raylib.DrawText(Score,0,0,30,Snake.color);
+    IntToStr(Snake.len, Score);
+    Raylib.DrawText(Score,scoreX,scoreY,30,Snake.color);
     HandleControls(Snake);
     DrawSnake(Snake);
     DrawRabbit(Rabbit);
@@ -169,17 +197,14 @@ BEGIN
   NewRabbit(Rabbit);
   Raylib.InitWindow(800, 600, title);
   Raylib.SetTargetFPS(60);
+
   (* go fullscreen with native resolution *)
   (* Raylib.ToggleFullscreen(); *)
 END Init;
 
 
 BEGIN
-
   Init();
-
-  (* Game objects - heap allocated *)
-
   WHILE ~Raylib.WindowShouldClose() DO
     Update();
   END;
