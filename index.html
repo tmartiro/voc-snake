@@ -1,9 +1,90 @@
 <!DOCTYPE html>
 
-<body>
+<body style="background:gray">
   <canvas id="app"> </canvas>
+  <br>
+  <img width="200px" src="./img/arrows.png" usemap="#image-map"></img>
+  <map name="image-map">
+    <area target="" alt="Left" title="Left" coords="0,60,60,128"  shape="rect" onclick='arrowClicked("left");'>
+    <area target="" alt="Down" title="Down" coords="70,60,130,128" shape="rect" onclick='arrowClicked("down");'>
+    <area target="" alt="Up" title="Right" coords="70,0,130,60" shape="rect" onclick='arrowClicked("up");'>
+    <area target="" alt="Right" title="Right" coords="140,60,200,128" shape="rect" onclick='arrowClicked("right");'>
+</map>
+<script>
+  function arrowClicked(name) {
+    const canvas = document.getElementById("app");
+    switch(name) {
+      case "up":
+        canvas.dispatchEvent(new KeyboardEvent('keydown', {
+            key: 'ArrowUp',
+            code: 'ArrowUp',
+            bubbles: true,
+            cancelable: true
+        }));
+        setTimeout(()=> {
+          canvas.dispatchEvent(new KeyboardEvent('keyup', {
+              key: 'ArrowUp',
+              code: 'ArrowUp',
+              bubbles: true,
+              cancelable: true
+          }))}, 10);
+        break;
+      case "down":
+        canvas.dispatchEvent(new KeyboardEvent('keydown', {
+            key: 'ArrowDown',
+            code: 'ArrowDown',
+            bubbles: true,
+            cancelable: true
+        }));
+        setTimeout(()=> {
+          canvas.dispatchEvent(new KeyboardEvent('keyup', {
+              key: 'ArrowDown',
+              code: 'ArrowDown',
+              bubbles: true,
+              cancelable: true
+          }))}, 10);
+        break;
+      case "left":
+        canvas.dispatchEvent(new KeyboardEvent('keydown', {
+            key: 'ArrowLeft',
+            code: 'ArrowLeft',
+            bubbles: true,
+            cancelable: true
+        }));
+        setTimeout(()=> {
+          canvas.dispatchEvent(new KeyboardEvent('keyup', {
+              key: 'ArrowLeft',
+              code: 'ArrowLeft',
+              bubbles: true,
+              cancelable: true
+            }))}, 10);
+        break;
+      case "right":
+        canvas.dispatchEvent(new KeyboardEvent('keydown', {
+            key: 'ArrowRight',
+            code: 'ArrowRight',
+            bubbles: true,
+            cancelable: true
+        }));
+        setTimeout(()=> {
+          canvas.dispatchEvent(new KeyboardEvent('keyup', {
+              key: 'ArrowRight',
+              code: 'ArrowRight',
+              bubbles: true,
+              cancelable: true
+          }))}, 10);
+        break;
+    }
+  }
+</script>
+
 </body>
+
+
 <script type="module">
+
+
+
   var wasm;
   const glfwKeyMapping = {
     "Space":          32,
@@ -138,6 +219,7 @@
             currentPressedKeyState.add(glfwKeyMapping[e.code]);
         };
     const keyUp = (e) => {
+      console.log(e);
             currentPressedKeyState.delete(glfwKeyMapping[e.code]);
     };
     window.addEventListener("keydown", keyDown);
