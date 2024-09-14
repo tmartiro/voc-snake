@@ -12,18 +12,17 @@ compile_osx() {
 	clang \
 		-g \
 		*.o -o Snake \
-		-L${voc_lib} -lvoc-O2 \
+		-L${voc_lib} \
 		${raylib} \
+		${voc_lib}\libvoc-O2.a \
 		-framework OpenGL -framework Cocoa -framework IOKit -framework CoreAudio -framework CoreVideo
 }
 
 compile_wasm() {
-	$voc -ce  Raylib.Mod
-	$voc -cm  Snake.Mod
-	clang -I${voc_include} --target=wasm32 -emit-llvm --no-standard-libraries -c -S Snake.c Raylib.c
+	compile_osx
+	clang --target=wasm32 -I ${voc_include} -emit-llvm -c -S Snake.c
 	llc -march=wasm32 -filetype=obj Snake.ll
-	llc -march=wasm32 -filetype=obj Raylib.ll
-	wasm-ld --no-entry --export=Snake_Init --export=Snake_Update --allow-undefined -o snake.wasm Snake.o Raylib.o
+	wasm-ld --no-entry --export-all --allow-undefined -o snake.wasm Snake.o
 }
 
 run() {

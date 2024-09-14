@@ -2,7 +2,7 @@ MODULE Snake;
 IMPORT SYSTEM, Raylib, Out, Math, Strings, VT100;
 
 TYPE
-  pTSnake= POINTER TO TSnake;
+  (* pTSnake= POINTER TO TSnake; *)
   TSnake = RECORD
     color: Raylib.TColor;
     pos: Raylib.TVector2;
@@ -10,7 +10,7 @@ TYPE
     len: INTEGER;
     tail: ARRAY 256 OF Raylib.TVector2;
   END;
-  pTRabbit = POINTER TO TRabbit;
+  (* pTRabbit = POINTER TO TRabbit; *)
   TRabbit = RECORD
     color: Raylib.TColor;
     pos: Raylib.TVector2;
@@ -26,15 +26,12 @@ VAR
   SnakePos: Raylib.TVector2;
   DeltaPos: Raylib.TVector2;
   Velocity: REAL;
-  Snake: pTSnake;
-  Rabbit: pTRabbit;
+  Snake: TSnake;
+  Rabbit: TRabbit;
   Score: ARRAY 256 OF CHAR;
 
-PROCEDURE NewRabbit():pTRabbit;
-VAR
- r: pTRabbit;
+PROCEDURE NewRabbit(VAR r:TRabbit);
 BEGIN
-  NEW(r);
   r.color.r := 0FFX;
   r.color.g := 0X;
   r.color.b := 0AAX;
@@ -43,15 +40,12 @@ BEGIN
   r.size.y := 15.0;
   r.pos.x := SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenWidth()));
   r.pos.y := SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenHeight()));
-  RETURN r;
 END NewRabbit;
 
 
-PROCEDURE NewSnake():pTSnake;
-VAR
- s: pTSnake;
+PROCEDURE NewSnake(VAR s: TSnake);
 BEGIN
-  NEW(s);
+  (* NEW(s); *)
   s.color.r := 0X;
   s.color.g := 0FFX;
   s.color.b := 0X;
@@ -61,10 +55,9 @@ BEGIN
   s.pos.x := 0;
   s.pos.y := 100;
   s.len := 0;
-  RETURN s;
 END NewSnake;
 
-PROCEDURE DrawSnake(s:pTSnake);
+PROCEDURE DrawSnake(VAR s:TSnake);
 VAR
   i:INTEGER;
 BEGIN
@@ -74,7 +67,7 @@ BEGIN
   Raylib.DrawRectangleV(s.pos, s.size, s.color);
 END DrawSnake;
 
-PROCEDURE DrawRabbit(r:pTRabbit);
+PROCEDURE DrawRabbit(VAR r:TRabbit);
 VAR
   earpos : Raylib.TVector2;
   earsize: Raylib.TVector2;
@@ -85,12 +78,13 @@ BEGIN
   Raylib.DrawRectangleV(earpos, earsize, r.color);
   earpos.x := r.pos.x + r.size.x/1.5;
   Raylib.DrawRectangleV(earpos, earsize, r.color);
+
   (* draw body *)
   Raylib.DrawRectangleV(r.pos, r.size, r.color);
 END DrawRabbit;
 
 
-PROCEDURE Eat(S:pTSnake; R:pTRabbit);
+PROCEDURE Eat(VAR S:TSnake; VAR R:TRabbit);
 VAR
 X: REAL;
 Y: REAL;
@@ -104,7 +98,7 @@ BEGIN
   END;
 END Eat;
 
-PROCEDURE HandleControls();
+PROCEDURE HandleControls(VAR s:TSnake);
 VAR
   i:INTEGER;
 BEGIN
@@ -119,29 +113,29 @@ BEGIN
       END;
 
       (* Tail *)
-      FOR i := Snake.len TO 0 BY -1 DO
+      FOR i := s.len TO 0 BY -1 DO
         IF i = 0 THEN
-          Snake.tail[0] := Snake.pos;
+          s.tail[0] := s.pos;
         ELSE
-          Snake.tail[i] := Snake.tail[i - 1];
+          s.tail[i] := s.tail[i - 1];
         END;
       END;
 
 
       (* Head *)
-      Snake.pos.x := Snake.pos.x + DeltaPos.x;
-      Snake.pos.y := Snake.pos.y + DeltaPos.y;
+      s.pos.x := s.pos.x + DeltaPos.x;
+      s.pos.y := s.pos.y + DeltaPos.y;
 
-      IF Snake.pos.x > Raylib.GetScreenWidth() THEN
-        Snake.pos.x := 0
-      ELSIF Snake.pos.x < 0 THEN
-        Snake.pos.x := Raylib.GetScreenWidth();
+      IF s.pos.x > Raylib.GetScreenWidth() THEN
+        s.pos.x := 0
+      ELSIF s.pos.x < 0 THEN
+        s.pos.x := Raylib.GetScreenWidth();
       END;
 
-      IF Snake.pos.y > Raylib.GetScreenHeight() THEN
-        Snake.pos.y := 0;
-      ELSIF Snake.pos.y < 0 THEN
-        Snake.pos.y := Raylib.GetScreenHeight();
+      IF s.pos.y > Raylib.GetScreenHeight() THEN
+        s.pos.y := 0;
+      ELSIF s.pos.y < 0 THEN
+        s.pos.y := Raylib.GetScreenHeight();
       END;
 END HandleControls;
 
@@ -151,7 +145,7 @@ BEGIN
     Raylib.ClearBackground(BgColor);
     VT100.IntToStr(Snake.len, Score);
     Raylib.DrawText(Score,0,0,30,Snake.color);
-    HandleControls();
+    HandleControls(Snake);
     DrawSnake(Snake);
     DrawRabbit(Rabbit);
     Eat(Snake, Rabbit);
@@ -160,14 +154,8 @@ END Update;
 
 
 PROCEDURE Init*();
-BEGIN
-  Raylib.InitWindow(800, 600, title);
-  Raylib.SetTargetFPS(60);
-  (* go fullscreen with native resolution *)
-  (* Raylib.ToggleFullscreen(); *)
-END Init;
-
-
+VAR
+  addr: SYSTEM.ADDRESS;
 BEGIN
   BgColor.r := 0X;
   BgColor.g := 0X;
@@ -177,12 +165,20 @@ BEGIN
   DeltaPos.x := 1 * Velocity;
   DeltaPos.y := 0;
   Raylib.SetRandomSeed(0FAAH);
+  NewSnake(Snake);
+  NewRabbit(Rabbit);
+  Raylib.InitWindow(800, 600, title);
+  Raylib.SetTargetFPS(60);
+  (* go fullscreen with native resolution *)
+  (* Raylib.ToggleFullscreen(); *)
+END Init;
+
+
+BEGIN
 
   Init();
 
   (* Game objects - heap allocated *)
-  Snake := NewSnake();
-  Rabbit := NewRabbit();
 
   WHILE ~Raylib.WindowShouldClose() DO
     Update();
