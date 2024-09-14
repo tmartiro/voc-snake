@@ -85,11 +85,11 @@ PROCEDURE -rectInit(X:REAL; Y:REAL; W:REAL; H:REAL):INTEGER "(struct Rectangle){
 PROCEDURE -clearBackgroundR(color:SET) "ClearBackground(color)";
 PROCEDURE -drawRectangleVR(pos:REAL; size:REAL; color:SET) "DrawRectangleV(pos,size,color)";
 PROCEDURE -drawRectangleR(posx:LONGINT; posy:LONGINT; width:LONGINT; height:LONGINT; color:SET) "DrawRectangle(posx, posy, width, height, color)";
-PROCEDURE -drawTextR(text:ARRAY OF CHAR; posX:LONGINT; posY:LONGINT; fontSize:LONGINT; color:SET) "DrawText(text,posX,posY,fontSize,color)";
+PROCEDURE -drawTextR(VAR text:ARRAY OF CHAR; posX:LONGINT; posY:LONGINT; fontSize:LONGINT; color:SET) "DrawText(text,posX,posY,fontSize,color)";
 
 
 
-PROCEDURE DrawText*(text:ARRAY OF CHAR; posx:LONGINT; posy:LONGINT; fontSize:LONGINT; C:TColor);
+PROCEDURE DrawText*(VAR text:ARRAY OF CHAR; posx:LONGINT; posy:LONGINT; fontSize:LONGINT; C:TColor);
 BEGIN
   drawTextR(text,posx,posy,fontSize,colorInit(C.r, C.g, C.b, C.a));
 END DrawText;

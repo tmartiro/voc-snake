@@ -26,7 +26,16 @@ Linux: Finally build and run the example program written in Oberon2
 
 OSX: Finally build and run the example program written in Oberon2
 ```
-./build-osx.sh
+./build-macosx.sh
 ```
+
+WASM: The build has been tested on OSX
+```
+./build-macosx.sh wasm
+# run http server because of wasm
+python -m http.server
+# open in the browser http://localhost:8000
+```
+[Try demo with wasm!](https://tmartiro.github.io/voc-snake)
 
 

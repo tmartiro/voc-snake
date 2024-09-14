@@ -8,3 +8,4 @@ voc
 *.o
 *.h
 *.sym
+*.ll

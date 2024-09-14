@@ -1,8 +1,8 @@
 MODULE Snake;
-IMPORT SYSTEM, Raylib, Out, Math, Strings, VT100;
+IMPORT SYSTEM, Raylib, Math;
 
 TYPE
-  pTSnake= POINTER TO TSnake;
+  (* pTSnake= POINTER TO TSnake; *)
   TSnake = RECORD
     color: Raylib.TColor;
     pos: Raylib.TVector2;
@@ -10,7 +10,7 @@ TYPE
     len: INTEGER;
     tail: ARRAY 256 OF Raylib.TVector2;
   END;
-  pTRabbit = POINTER TO TRabbit;
+  (* pTRabbit = POINTER TO TRabbit; *)
   TRabbit = RECORD
     color: Raylib.TColor;
     pos: Raylib.TVector2;
@@ -19,22 +19,44 @@ TYPE
     END;
 
 CONST
-  title = "Vishap";
+  title = "Odzik";
 
 VAR
   BgColor: Raylib.TColor;
   SnakePos: Raylib.TVector2;
   DeltaPos: Raylib.TVector2;
   Velocity: REAL;
-  Snake: pTSnake;
-  Rabbit: pTRabbit;
-  Score: ARRAY 256 OF CHAR;
+  Snake: TSnake;
+  Rabbit: TRabbit;
+  Score: ARRAY 10 OF CHAR;
 
-PROCEDURE NewRabbit():pTRabbit;
-VAR
- r: pTRabbit;
+PROCEDURE IntToStr(val: LONGINT; VAR str: ARRAY OF CHAR);
+  VAR
+    i, j: LONGINT;
+    digits: ARRAY 16 OF LONGINT;
 BEGIN
-  NEW(r);
+  IF val = MIN(LONGINT) THEN
+    COPY("-2147483648", str);
+    RETURN
+  END;
+  IF val < 0 THEN
+    val := -val; str[0] := "-"; j := 1
+  ELSE
+    j := 0
+  END;
+  i := 0;
+  REPEAT
+    digits[i] := val MOD 10; INC(i); val := val DIV 10
+  UNTIL val = 0;
+  DEC(i);
+  WHILE i >= 0 DO
+    str[j] := CHR(digits[i]+ORD("0")); INC(j); DEC(i)
+  END;
+  str[j] := 0X
+END IntToStr;
+
+PROCEDURE NewRabbit(VAR r:TRabbit);
+BEGIN
   r.color.r := 0FFX;
   r.color.g := 0X;
   r.color.b := 0AAX;
@@ -43,15 +65,11 @@ BEGIN
   r.size.y := 15.0;
   r.pos.x := SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenWidth()));
   r.pos.y := SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenHeight()));
-  RETURN r;
 END NewRabbit;
 
 
-PROCEDURE NewSnake():pTSnake;
-VAR
- s: pTSnake;
+PROCEDURE NewSnake(VAR s: TSnake);
 BEGIN
-  NEW(s);
   s.color.r := 0X;
   s.color.g := 0FFX;
   s.color.b := 0X;
@@ -61,10 +79,9 @@ BEGIN
   s.pos.x := 0;
   s.pos.y := 100;
   s.len := 0;
-  RETURN s;
 END NewSnake;
 
-PROCEDURE DrawSnake(s:pTSnake);
+PROCEDURE DrawSnake(VAR s:TSnake);
 VAR
   i:INTEGER;
 BEGIN
@@ -74,7 +91,7 @@ BEGIN
   Raylib.DrawRectangleV(s.pos, s.size, s.color);
 END DrawSnake;
 
-PROCEDURE DrawRabbit(r:pTRabbit);
+PROCEDURE DrawRabbit(VAR r:TRabbit);
 VAR
   earpos : Raylib.TVector2;
   earsize: Raylib.TVector2;
@@ -85,12 +102,13 @@ BEGIN
   Raylib.DrawRectangleV(earpos, earsize, r.color);
   earpos.x := r.pos.x + r.size.x/1.5;
   Raylib.DrawRectangleV(earpos, earsize, r.color);
+
   (* draw body *)
   Raylib.DrawRectangleV(r.pos, r.size, r.color);
 END DrawRabbit;
 
 
-PROCEDURE Eat(S:pTSnake; R:pTRabbit);
+PROCEDURE Eat(VAR S:TSnake; VAR R:TRabbit);
 VAR
 X: REAL;
 Y: REAL;
@@ -104,7 +122,7 @@ BEGIN
   END;
 END Eat;
 
-PROCEDURE HandleControls();
+PROCEDURE HandleControls(VAR s:TSnake);
 VAR
   i:INTEGER;
 BEGIN
@@ -119,33 +137,53 @@ BEGIN
       END;
 
       (* Tail *)
-      FOR i := Snake.len TO 0 BY -1 DO
+      FOR i := s.len TO 0 BY -1 DO
         IF i = 0 THEN
-          Snake.tail[0] := Snake.pos;
+          s.tail[0] := s.pos;
         ELSE
-          Snake.tail[i] := Snake.tail[i - 1];
+          s.tail[i] := s.tail[i - 1];
         END;
       END;
 
 
       (* Head *)
-      Snake.pos.x := Snake.pos.x + DeltaPos.x;
-      Snake.pos.y := Snake.pos.y + DeltaPos.y;
+      s.pos.x := s.pos.x + DeltaPos.x;
+      s.pos.y := s.pos.y + DeltaPos.y;
 
-      IF Snake.pos.x > Raylib.GetScreenWidth() THEN
-        Snake.pos.x := 0
-      ELSIF Snake.pos.x < 0 THEN
-        Snake.pos.x := Raylib.GetScreenWidth();
+      IF s.pos.x > Raylib.GetScreenWidth() THEN
+        s.pos.x := 0
+      ELSIF s.pos.x < 0 THEN
+        s.pos.x := Raylib.GetScreenWidth();
       END;
 
-      IF Snake.pos.y > Raylib.GetScreenHeight() THEN
-        Snake.pos.y := 0;
-      ELSIF Snake.pos.y < 0 THEN
-        Snake.pos.y := Raylib.GetScreenHeight();
+      IF s.pos.y > Raylib.GetScreenHeight() THEN
+        s.pos.y := 0;
+      ELSIF s.pos.y < 0 THEN
+        s.pos.y := Raylib.GetScreenHeight();
       END;
 END HandleControls;
 
 
+PROCEDURE Update*();
+VAR
+  scoreX: INTEGER;
+  scoreY: INTEGER;
+BEGIN
+    Raylib.BeginDrawing();
+    Raylib.ClearBackground(BgColor);
+    IntToStr(Snake.len, Score);
+    Raylib.DrawText(Score,scoreX,scoreY,30,Snake.color);
+    HandleControls(Snake);
+    DrawSnake(Snake);
+    DrawRabbit(Rabbit);
+    Eat(Snake, Rabbit);
+    Raylib.EndDrawing();
+END Update;
+
+
+PROCEDURE Init*();
+VAR
+  addr: SYSTEM.ADDRESS;
 BEGIN
   BgColor.r := 0X;
   BgColor.g := 0X;
@@ -155,28 +193,20 @@ BEGIN
   DeltaPos.x := 1 * Velocity;
   DeltaPos.y := 0;
   Raylib.SetRandomSeed(0FAAH);
-
-  (* initialize the window *)
-  Raylib.InitWindow(0, 0, title);
+  NewSnake(Snake);
+  NewRabbit(Rabbit);
+  Raylib.InitWindow(800, 600, title);
   Raylib.SetTargetFPS(60);
 
   (* go fullscreen with native resolution *)
-  Raylib.ToggleFullscreen();
+  (* Raylib.ToggleFullscreen(); *)
+END Init;
 
-  (* Game objects - heap allocated *)
-  Snake := NewSnake();
-  Rabbit := NewRabbit();
 
+BEGIN
+  Init();
   WHILE ~Raylib.WindowShouldClose() DO
-    Raylib.BeginDrawing();
-    Raylib.ClearBackground(BgColor);
-    VT100.IntToStr(Snake.len, Score);
-    Raylib.DrawText(Score,0,0,30,Snake.color);
-    HandleControls();
-    DrawSnake(Snake);
-    DrawRabbit(Rabbit);
-    Eat(Snake, Rabbit);
-    Raylib.EndDrawing();
+    Update();
   END;
 
   Raylib.CloseWindow();
