@@ -78,6 +78,7 @@ PROCEDURE -GetFrameTime*():REAL "(float)GetFrameTime()";
 PROCEDURE -GetRandomValue*(min:LONGINT; max:LONGINT):LONGINT "(int)GetRandomValue(min,max)";
 PROCEDURE -SetRandomSeed*(seed:LONGINT) "SetRandomSeed(seed)";
 PROCEDURE -GetTime*():REAL "(double)GetTime()";
+PROCEDURE -SetWindowSize*(width:LONGINT; height:LONGINT) "SetWindowSize(width, height)";
 
 PROCEDURE -colorInit(R:CHAR; G:CHAR; B:CHAR; A:CHAR):SET "(struct Color){ .r = R, .g = G, .b = B, .a = A }";
 PROCEDURE -vector2Init(X:REAL; Y:REAL):INTEGER "(struct Vector2){ .x = X, .y = Y }";

@@ -122,6 +122,7 @@ BEGIN
     R.pos.y := Y+(R.size.y/2);
     IF (S.len+1) < MaxTailLen THEN
       S.len := S.len + 1;
+      (* Raylib.SetWindowSize(100, 200); *)
       (* Raylib.DrawText("Yow Win !", (Raylib.GetScreenWidth()/2 - 100), (Raylib.GetScreenHeight()/2), 50, Snake.color); *)
     END;
   END;

@@ -158,7 +158,7 @@
       const signY = Math.sign(mouseDownPosition.y - e.clientY);
       const deltaX = Math.abs(mouseDownPosition.x - e.clientX);
       const deltaY = Math.abs(mouseDownPosition.y - e.clientY);
-      mouseDownPosition = { x: ctx.canvas.width/2, y: ctx.canvas.height/2 };
+      mouseDownPosition = { x: e.clientX, y: e.clientY };
 
       if (direction == "right" || direction == "left") {
         if (signY === 1) {
