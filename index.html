@@ -233,7 +233,7 @@
       },
       InitWindow: (width, height, title_ptr) => {
         let buffer = wasm.instance.exports.memory.buffer;
-        ctx.canvas.width = width;
+        ctx.canvas.width = window.innerWidth-10;
         ctx.canvas.height = height;
         const title = cstr_by_ptr(buffer, title_ptr);
 
@@ -246,10 +246,10 @@
         return false
       },
       GetScreenWidth: () => {
-        return 800
+        return window.innerWidth-100;
       },
       GetScreenHeight: () => {
-        return 600
+        return 600;
       },
       BeginDrawing:() => {},
       Raylib_DrawText: (text_ptr, text_len, x, y, fontSize, color_ptr) => {
