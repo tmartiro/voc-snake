@@ -89,7 +89,7 @@ PROCEDURE -drawTextR(VAR text:ARRAY OF CHAR; posX:LONGINT; posY:LONGINT; fontSiz
 
 
 
-PROCEDURE DrawText*(VAR text:ARRAY OF CHAR; posx:LONGINT; posy:LONGINT; fontSize:LONGINT; C:TColor);
+PROCEDURE DrawText*(text:ARRAY OF CHAR; posx:LONGINT; posy:LONGINT; fontSize:LONGINT; C:TColor);
 BEGIN
   drawTextR(text,posx,posy,fontSize,colorInit(C.r, C.g, C.b, C.a));
 END DrawText;

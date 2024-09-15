@@ -1,6 +1,10 @@
 MODULE Snake;
 IMPORT SYSTEM, Raylib, Math;
 
+CONST
+  title = "Odzik";
+  MaxTailLen = 256;
+
 TYPE
   (* pTSnake= POINTER TO TSnake; *)
   TSnake = RECORD
@@ -8,7 +12,7 @@ TYPE
     pos: Raylib.TVector2;
     size: Raylib.TVector2;
     len: INTEGER;
-    tail: ARRAY 256 OF Raylib.TVector2;
+    tail: ARRAY MaxTailLen OF Raylib.TVector2;
   END;
   (* pTRabbit = POINTER TO TRabbit; *)
   TRabbit = RECORD
@@ -18,8 +22,6 @@ TYPE
 
     END;
 
-CONST
-  title = "Odzik";
 
 VAR
   BgColor: Raylib.TColor;
@@ -118,14 +120,26 @@ BEGIN
     Y:= Math.round(SYSTEM.VAL(REAL, Raylib.GetRandomValue(0, Raylib.GetScreenHeight()-100)) / 5.0) * 5.0;
     R.pos.x := X+(R.size.x/2);
     R.pos.y := Y+(R.size.y/2);
-    S.len := S.len + 1;
+    IF (S.len+1) < MaxTailLen THEN
+      S.len := S.len + 1;
+      (* Raylib.DrawText("Yow Win !", (Raylib.GetScreenWidth()/2 - 100), (Raylib.GetScreenHeight()/2), 50, Snake.color); *)
+    END;
   END;
 END Eat;
+
+PROCEDURE isWinner():BOOLEAN;
+BEGIN
+    RETURN Snake.len = (MaxTailLen-1)
+END isWinner;
 
 PROCEDURE HandleControls(VAR s:TSnake);
 VAR
   i:INTEGER;
 BEGIN
+      IF isWinner() THEN
+        RETURN;
+      END;
+
       IF (Raylib.IsKeyPressed(Raylib.KeyDown)) & (DeltaPos.y # -1.0*Velocity) THEN
         DeltaPos.x := 0.0; DeltaPos.y := 1.0*Velocity;
       ELSIF (Raylib.IsKeyPressed(Raylib.KeyUp)) & (DeltaPos.y # 1.0*Velocity) THEN
@@ -177,8 +191,12 @@ BEGIN
     DrawSnake(Snake);
     DrawRabbit(Rabbit);
     Eat(Snake, Rabbit);
+    IF isWinner() THEN
+      Raylib.DrawText("Yow Win!", (Raylib.GetScreenWidth() DIV 2) - 100, (Raylib.GetScreenHeight() DIV 2) - 0, 50, Snake.color);
+    END;
     Raylib.EndDrawing();
 END Update;
+
 
 
 PROCEDURE Init*();
