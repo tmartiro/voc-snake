@@ -193,7 +193,7 @@ BEGIN
     DrawRabbit(Rabbit);
     Eat(Snake, Rabbit);
     IF isWinner() THEN
-      Raylib.DrawText("Yow Win!", (Raylib.GetScreenWidth() DIV 2) - 100, (Raylib.GetScreenHeight() DIV 2) - 0, 50, Snake.color);
+      Raylib.DrawText("You Win!", (Raylib.GetScreenWidth() DIV 2) - 100, (Raylib.GetScreenHeight() DIV 2) - 0, 50, Snake.color);
     END;
     Raylib.EndDrawing();
 END Update;
