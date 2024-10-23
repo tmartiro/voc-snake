@@ -7,11 +7,15 @@ git clone https://github.com/tmartiro/voc-snake
 cd voc-snake
 ```
 
-VOC compiler build
+[VOC](https://github.com/vishapoberon/compiler) is an free implementation of the Oberon-2 language and libraries for use on conventional operating systems such as Linux, BSD, Android, Mac and Windows
+
+VOC compiler build 
 ```
 git clone https://github.com/vishaps/voc
 make full -C voc
 ```
+[Raylib](https://github.com/raysan5/raylib.git) is a simple and easy-to-use library to enjoy videogames programming.
+
 Raylib library build
 (for linux build you need to have following libraries preinstalled `libwayland-dev libxkbcommon-dev xorg-dev`)
 ```
