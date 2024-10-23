@@ -30,6 +30,8 @@ OSX: Finally build and run the example program written in Oberon2
 ```
 
 WASM: The build has been tested on OSX
+
+Some portions of the JavaScript glue code were derived from the [zozlib]( https://github.com/tsoding/zozlib.js) library (kudos to [Alexey Kutepov](https://github.com/rexim))
 ```
 ./build-macosx.sh wasm
 # run http server because of wasm
