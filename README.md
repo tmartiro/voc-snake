@@ -7,7 +7,7 @@ git clone https://github.com/tmartiro/voc-snake
 cd voc-snake
 ```
 
-[VOC](https://github.com/vishapoberon/compiler) is an free implementation of the Oberon-2 language and libraries for use on conventional operating systems such as Linux, BSD, Android, Mac and Windows
+[VOC](https://github.com/vishapoberon/compiler) is a free implementation of the Oberon-2 language and libraries for use on conventional operating systems such as Linux, BSD, Android, Mac and Windows
 
 VOC compiler build 
 ```
